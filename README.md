@@ -108,7 +108,7 @@ Here we provide some of the models on the dataset. The accuracy is tested using 
 #### Something-Something-V1
 
 | model (ResNet50)  | n-frame, r | acc (full res * 2clip) | checkpoint                 | test log                                                     |
-| ------------- | ------- | ------------------------- | ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ------------- | ------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | ECal-L-TSN  | 8, 16       | 48.2                   | [link](https://drive.google.com/file/d/1c8hrtADuqQA63tKCef8v7uF5v5wgf-E_/view?usp=sharing) | [link](https://drive.google.com/file/d/1hZ7-msCwcGZ2ExsZHCM2wQl2_xxToYmj/view?usp=sharing) |
 | ECal-L-TSN  | 16, 16      | 48.8                   | [link](https://drive.google.com/file/d/12hR-0CX66c904lstf-eXc7k7mHrn2cAL/view?usp=sharing) | [link](https://drive.google.com/file/d/1rQW8oWf6PQ4HQdgtngGpZ9DrQXdqT3AJ/view?usp=sharing) |
 | ECal-T-TSM  | 8, 16       | 49.7                   | [link](https://drive.google.com/file/d/1c8hrtADuqQA63tKCef8v7uF5v5wgf-E_/view?usp=sharing) | [link](https://drive.google.com/file/d/1N6w9W6zVCZ1sRg6A23QAeF4VVfnX16P7/view?usp=sharing) |
