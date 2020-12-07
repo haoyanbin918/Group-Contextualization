@@ -13,9 +13,7 @@
 
 ## Overview
 
-We release the PyTorch code of the [Temporal Shift Module](https://arxiv.org/abs/1811.08383).
-
-![framework](https://file.lzhu.me/projects/tsm/external/TSM-module.png)
+We release the PyTorch code of the 
 
 ## Content
 
