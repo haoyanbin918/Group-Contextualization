@@ -105,7 +105,7 @@ Something-Something [V1](https://20bn.com/datasets/something-something/v1)&[V2](
 
 Here we provide some of the models on the dataset. The accuracy is tested using both efficient setting (center crop * 1clip) and accuate setting ([full resolution](https://github.com/facebookresearch/video-nonlocal-net) * 2clip)
 
-##### Something-Something-V1
+#### Something-Something-V1
 
 | model (ResNet50)  | n-frame, r | acc (full res * 2clip) | checkpoint                 | test log                                                     |
 | ------------- | ------- | ------------------------- | ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
