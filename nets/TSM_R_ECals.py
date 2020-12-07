@@ -6,6 +6,8 @@ import torchvision.models as models
 
 import nets.EF_blocks2d as EF_zoo
 
+
+
 __all__ = ['ResNet', 'resnet50', 'resnet101', 'resnet152']
 
 
@@ -34,9 +36,8 @@ model_urls = {
 class Bottleneck(nn.Module):
     expansion = 4
  
-    def __init__(self, EF, inplanes, planes, stride=1, downsample=None, use_ef=False, cdiv=2, num_segments=8):
+    def __init__(self, EF, inplanes, planes, stride=1, downsample=None, n_segment=8, fold_div=8, place=None, use_ef=False, cdiv=2):
         super(Bottleneck, self).__init__()
-        self.use_ef = use_ef
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
@@ -45,20 +46,33 @@ class Bottleneck(nn.Module):
         self.conv3 = nn.Conv2d(planes, planes * self.expansion, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
-        if self.use_ef:
-            print('=> Using Element Filter with cdiv: {}'.format(cdiv))
-            self.eft = EF(planes * self.expansion, planes * self.expansion, cdiv, num_segments)
         self.downsample = downsample
         self.stride = stride
- 
+        self.n_segment = n_segment
+        self.fold_div = fold_div
+        self.place = place
+        self.use_ef = use_ef
+
+        if self.use_ef:
+            print('=> Using Element Filter with cdiv: {}'.format(cdiv))
+            self.eft = EF(planes * self.expansion, planes * self.expansion, cdiv, n_segment)
+        # self.inplace = inplace
+
+        if place in ['block', 'blockres']:
+            print('=> Using fold div: {}'.format(self.fold_div))
+
     def forward(self, x):
-        # x = [bcz*n_seg, c, h, w]
         residual = x
- 
-        out = self.conv1(x)
+
+        if self.place == 'blockres':
+            out = self.shift(x, self.n_segment, fold_div=self.fold_div)
+            out = self.conv1(out)
+        else:
+            out = self.conv1(x)
+
         out = self.bn1(out)
         out = self.relu(out)
- 
+
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
@@ -76,13 +90,36 @@ class Bottleneck(nn.Module):
  
         out += residual
         out = self.relu(out)
+        #
+        if self.place == 'block':
+            out = self.shift(out, self.n_segment, fold_div=self.fold_div)
  
         return out
+    #
+    @staticmethod
+    def shift(x, n_segment, fold_div=3, inplace=False):
+        nt, c, h, w = x.size()
+        n_batch = nt // n_segment
+        x = x.view(n_batch, n_segment, c, h, w)
+
+        fold = c // fold_div
+        if inplace:
+            # Due to some out of order error when performing parallel computing. 
+            # May need to write a CUDA kernel.
+            raise NotImplementedError  
+            # out = InplaceShift.apply(x, fold)
+        else:
+            out = torch.zeros_like(x)
+            out[:, :-1, :fold] = x[:, 1:, :fold]  # shift left
+            out[:, 1:, fold: 2 * fold] = x[:, :-1, fold: 2 * fold]  # shift right
+            out[:, :, 2 * fold:] = x[:, :, 2 * fold:]  # not shift
+
+        return out.view(nt, c, h, w)
 
 
 class ResNet(nn.Module):
  
-    def __init__(self, block, EF, layers, num_classes=1000, cdiv=2, num_segments=8):
+    def __init__(self, block, EF, layers, n_segments, num_classes=1000, fold_div=8, place='blockres', cdiv=2):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -90,13 +127,15 @@ class ResNet(nn.Module):
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, layers[0], EF, cdiv=cdiv, n_seg=num_segments)
-        self.layer2 = self._make_layer(block, 128, layers[1], EF, stride=2, cdiv=cdiv, n_seg=num_segments)
-        self.layer3 = self._make_layer(block, 256, layers[2], EF, stride=2, cdiv=cdiv, n_seg=num_segments)
-        self.layer4 = self._make_layer(block, 512, layers[3], EF, stride=2, cdiv=cdiv, n_seg=num_segments)
+        #
+        self.layer1 = self._make_layer(block, 64, layers[0], EF, n_seg=n_segments[0], fold_d=fold_div, pla=place, cdiv=cdiv)
+        self.layer2 = self._make_layer(block, 128, layers[1], EF, stride=2, n_seg=n_segments[1], fold_d=fold_div, pla=place, cdiv=cdiv)
+        self.layer3 = self._make_layer(block, 256, layers[2], EF, stride=2, n_seg=n_segments[2], fold_d=fold_div, pla=place, cdiv=cdiv)
+        self.layer4 = self._make_layer(block, 512, layers[3], EF, stride=2, n_seg=n_segments[3], fold_d=fold_div, pla=place, cdiv=cdiv)
+        #
         self.avgpool = nn.AvgPool2d(7, stride=1)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
- 
+        #
         for name, m in self.named_modules():
             if 'eft' not in name:
                 # if 'deconv' in name:
@@ -110,8 +149,9 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.weight, 1)
                     nn.init.constant_(m.bias, 0)
  
-    def _make_layer(self, block, planes, blocks, EF, stride=1, cdiv=2, n_seg=8):
+    def _make_layer(self, block, planes, blocks, EF, stride=1, n_seg=8, fold_d=8, pla=None, cdiv=2):
         print('=> Processing stage with {} blocks'.format(blocks))
+        #
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
@@ -121,20 +161,20 @@ class ResNet(nn.Module):
             )
  
         layers = []
-        layers.append(block(EF, self.inplanes, planes, stride, downsample, True, cdiv=cdiv, num_segments=n_seg))
+        layers.append(block(EF, self.inplanes, planes, stride, downsample, n_seg, fold_d, pla, True, cdiv))
         self.inplanes = planes * block.expansion
         #
         n_round = 1
         if blocks >= 23:
             n_round = 2
             print('=> Using n_round {} to insert Element Filter -T'.format(n_round))
+            print('=> Using n_round {} to insert temporal shift'.format(n_round))
         #
         for i in range(1, blocks):
             if i % n_round == 0:
-                use_ef = True
+                layers.append(block(EF, self.inplanes, planes, n_segment=n_seg, fold_div=fold_d, place=pla, use_ef=True, cdiv=cdiv))
             else:
-                use_ef = False
-            layers.append(block(EF, self.inplanes, planes, use_ef=use_ef, cdiv=cdiv, num_segments=n_seg))
+                layers.append(block(self.inplanes, planes, use_ef=False))
  
         return nn.Sequential(*layers)
  
@@ -165,48 +205,56 @@ class ResNet(nn.Module):
 #     return model
 
 
-def resnet50(pretrained=False, EF='EF_L33D', **kwargs):
+def resnet50(pretrained=False, EF='EF_L33D', n_segment=8, **kwargs):
     """Constructs a ResNet-50 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     EF_name = getattr(EF_zoo, EF)
-    model = ResNet(Bottleneck, EF_name, [3, 4, 6, 3], **kwargs)
+    n_segment_list = [n_segment] * 4
+    print('=> construct a TSM-EFT based on Resnet-50 model')
+    print('=> n_segment per stage: {}'.format(n_segment_list))
+    #
+    model = ResNet(Bottleneck, EF_name, [3, 4, 6, 3], n_segment_list, **kwargs)
     if pretrained:
         checkpoint = model_zoo.load_url(model_urls['resnet50'])
-        # checkpoint_keys = list(checkpoint.keys())
         model_dict = model.state_dict()
         model_dict.update(checkpoint)
         model.load_state_dict(model_dict)
-
     return model
  
  
-def resnet101(pretrained=False, EF='EF_L33D', **kwargs):
+def resnet101(pretrained=False, EF='EF_L33D', n_segment=8, **kwargs):
     """Constructs a ResNet-101 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     EF_name = getattr(EF_zoo, EF)
-    model = ResNet(Bottleneck, EF_name, [3, 4, 23, 3], **kwargs)
+    n_segment_list = [n_segment] * 4
+    print('=> construct a TSM-EFT based on Resnet-101 model')
+    print('=> n_segment per stage: {}'.format(n_segment_list))
+    #
+    model = ResNet(Bottleneck, EF_name, [3, 4, 23, 3], n_segment_list, **kwargs)
     if pretrained:
         checkpoint = model_zoo.load_url(model_urls['resnet101'])
-        # checkpoint_keys = list(checkpoint.keys())
         model_dict = model.state_dict()
         model_dict.update(checkpoint)
         model.load_state_dict(model_dict)
     return model
  
  
-# def resnet152(pretrained=False, **kwargs):
+# def resnet152(pretrained=False, n_segment=8, **kwargs):
 #     """Constructs a ResNet-152 model.
 #     Args:
 #         pretrained (bool): If True, returns a model pre-trained on ImageNet
 #     """
-#     model = ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
+#     n_segment_list = [n_segment] * 4
+#     print('=> construct a TSM-EFT based on Resnet-152 model')
+#     print('=> n_segment per stage: {}'.format(n_segment_list))
+#     #
+#     model = ResNet(Bottleneck, [3, 8, 36, 3], n_segment_list, **kwargs)
 #     if pretrained:
 #         checkpoint = model_zoo.load_url(model_urls['resnet152'])
-#         # checkpoint_keys = list(checkpoint.keys())
 #         model_dict = model.state_dict()
 #         model_dict.update(checkpoint)
 #         model.load_state_dict(model_dict)
@@ -215,10 +263,8 @@ def resnet101(pretrained=False, EF='EF_L33D', **kwargs):
 if __name__ == "__main__":
     inputs = torch.rand(8, 3, 224, 224) #[btz, channel, T, H, W]
     # inputs = torch.rand(1, 64, 4, 112, 112) #[btz, channel, T, H, W]
-    net = resnet50(False, num_classes=1000, cdiv=8, num_segments=8)
+    net = resnet101(True, n_segment=8, fold_div=8, place='blockres', cdiv=8)
     from thop import profile
     flops, params = profile(net, inputs=(inputs, ), custom_ops={net: net})
     print(flops)
     print(params)
-    # output = net(inputs)
-    # print output.size()
