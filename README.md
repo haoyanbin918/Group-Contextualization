@@ -1,13 +1,8 @@
 # Element-wise Calibrator Neural Networks for Video Understanding
-[CVPR21] Element-wise Calibrator Neural Networks for Video Understanding
+Element-wise Calibrator Neural Networks for Video Understanding
 
 ```
-@inproceedings{hao21ecal,
-  title={Element-wise Calibrator Neural Networks for Video Understanding},
-  author={Hao, Yanbin and Zhang, Hao and Ngo, Chong-Wah},
-  booktitle={Proceedings of the IEEE conference on Computer Vision and Pattern Recognition},
-  year={2021}
-} 
+
 ```
 
 
