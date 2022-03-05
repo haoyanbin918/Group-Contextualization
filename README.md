@@ -198,8 +198,10 @@ We provided several examples to train TSM with this repo:
 GC codes are jointly written and owned by [Dr. Yanbin Hao](https://haoyanbin918.github.io/) and [Dr. Hao Zhang](https://hzhang57.github.io/).
 
 ## Citing
+```bash
 @article{gc2022,
   title={Group Contextualization for Video Recognition},
   author={Yanbin Hao, Hao Zhang, Chong-Wah Ngo, Xiangnan He},
   journal={CVPR 2022},
 }
+```
