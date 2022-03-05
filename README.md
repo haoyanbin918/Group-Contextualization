@@ -1,5 +1,5 @@
-# Element-wise Calibrator Neural Networks for Video Understanding
-Element-wise Calibrator Neural Networks for Video Understanding
+# Group Contextualization for Video Recognition
+Group Contextualization for Video Recognition
 
 ```
 
