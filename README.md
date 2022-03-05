@@ -193,3 +193,13 @@ We provided several examples to train TSM with this repo:
        --batch-size 64 -j 16 --dropout 0.5 --consensus_type=avg --eval-freq=1 \
        --shift --shift_div=8 --shift_place=blockres --npb
   ```
+
+## Contributors
+GC codes are jointly written and owned by [Dr. Yanbin Hao](https://haoyanbin918.github.io/) and [Dr. Hao Zhang](https://hzhang57.github.io/).
+
+## Citing
+@article{gc2022,
+  title={Group Contextualization for Video Recognition},
+  author={Yanbin Hao, Hao Zhang, Chong-Wah Ngo, Xiangnan He},
+  journal={CVPR 2022},
+}
