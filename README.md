@@ -105,7 +105,7 @@ use the 224×224 center crop for performance report.
 
 ### Diving48
 | Model             | Frame * view * clip    | Top-1 Acc. |  Checkpoint |
-| ----------------- | ----------- | ---------- | ----------- | ---------------- |
+| ----------------- | ----------- | ---------- | ----------- |
 | GC-GST ResNet50   | 16 * 1 * 1  | 82.5%     | [link]() |
 | GC-TSN ResNet50   | 16 * 1 * 1  | 86.8%     | [link]() |
 | GC-TSM ResNet50   | 16 * 1 * 1  | 87.2%     | [link]() |
