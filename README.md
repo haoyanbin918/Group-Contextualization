@@ -71,26 +71,37 @@ use the 224×224 center crop for performance report.
 
 | Model             | Frame * view * clip    | Top-1 Acc. | Top-5 Acc. | Checkpoint |
 | ----------------- | ----------- | ---------- | ----------- | ---------------- |
-| GC-TSN ResNet50   | 8 * 1 * 2  | 75.2%      | 92.1%     | [link]() |
-| GC-TSN ResNet50   | 16 * 1 * 2  | 75.2%      | 92.1%     | [link]() |
-| GC-TSN ResNet50   | (8+16) * 1 * 2  | 75.2%      | 92.1%     | [link]() |
-| GC-TSM ResNet50   | 8 * 1 * 10  | 75.4%      | 91.9%     | [link]() |
-| GC-TSM ResNet50   | 16 * 1 * 10 | 76.7%      | 92.9%     | [link]() |
-| GC-TSM ResNet50   | 16 * 3 * 10 | 77.1%      | 92.9%     | [link]() |
-| GC-TDN ResNet50   | 8 * 3 * 10  | 77.3%      | 93.2%     | [link]() |
-| GC-TDN ResNet50   | 16 * 3 * 10  | 78.8%      | 93.8%     | [link]() |
-| GC-TDN ResNet50   | (8+16) * 3 * 10  | 79.6%   | 94.1%     | [link]() |
+| GC-GST ResNet50   | 8 * 1 * 2  | 48.8%      | 78.5%     | [link]() |
+| GC-GST ResNet50   | 16 * 1 * 2  | 50.4%      | 79.4%     | [link]() |
+| GC-GST ResNet50   | (8+16) * 1 * 2  | 52.5%      | 81.3%     | [link]() |
+| GC-TSN ResNet50   | 8 * 1 * 2  | 49.7%      | 78.2%     | [link]() |
+| GC-TSN ResNet50   | 16 * 1 * 2  | 51.3%      | 80.0%     | [link]() |
+| GC-TSN ResNet50   | (8+16) * 1 * 2  | 53.7%      | 81.8%     | [link]() |
+| GC-TSM ResNet50   | 8 * 1 * 2  | 51.1%      | 79.4%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 2 | 53.1%      | 81.2%     | [link]() |
+| GC-TSM ResNet50   | (8+16) * 1 * 2 | 55.0%      | 82.6%     | [link]() |
+| GC-TSM ResNet50   | (8+16) * 3 * 2  | 55.3%      | 82.7%     | [link]() |
+| GC-TDN ResNet50   | 8 * 1 * 1  | 53.7%      | 82.2%     | [link]() |
+| GC-TDN ResNet50   | 16 * 1 * 1  | 55.0%      | 82.3%     | [link]() |
+| GC-TDN ResNet50   | (8+16) * 1 * 1  | 56.4%   | 84.0%     | [link]() |
 
 #### Something-Something-V2
 
-On V2 dataset, the accuracy is reported under the accurate setting (full resolution * 2clip).
-
-| model (ResNet50)  | n-frame, r | acc (full res * 2clip) | checkpoint                                                   | test log                                                     |
-| ------------- | --------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ECal-L-TSN  | 8, 16       | 62.5                   | [link](https://drive.google.com/file/d/1cqa0jL9mH0TwNsz3ULAm0TRKpy76BkZ6/view?usp=sharing) | [link](https://drive.google.com/file/d/1CtA7HQ6br2UtNOlohus_8nojPAA-MUGw/view?usp=sharing) |
-| ECal-L-TSN  | 16, 16      | 63.1                   | [link](https://drive.google.com/file/d/16-GbO8s0jnx2Mnt6fGjjF6i8jRy-VgtE/view?usp=sharing) | [link](https://drive.google.com/file/d/1FpoQ6_JeSMWOtUbiKGkSRD5le1wGEqYd/view?usp=sharing) |
-| ECal-T-TSM  | 8, 16       | 63.5                   | [link](https://drive.google.com/file/d/1drbYjlOQT6_4OnQ5CnwMSVFEtic5U9F7/view?usp=sharing) | [link](https://drive.google.com/file/d/1KOw2neoveQehdQsuKM19I1JlbaHdbUtv/view?usp=sharing) |
-| ECal-T-TSM  | 16, 16      | 65.2                   | [link](https://drive.google.com/file/d/1wXo6RRnnnsS8LoID6qtobYadepXMH28l/view?usp=sharing) | [link](https://drive.google.com/file/d/1ToiEaK-tHNGyZNL4r_HJHFiBaD-sq6rM/view?usp=sharing) |
+| Model             | Frame * view * clip    | Top-1 Acc. | Top-5 Acc. | Checkpoint |
+| ----------------- | ----------- | ---------- | ----------- | ---------------- |
+| GC-GST ResNet50   | 8 * 1 * 2  | 61.9%      | 87.8%     | [link]() |
+| GC-GST ResNet50   | 16 * 1 * 2  | 63.3%      | 88.5%     | [link]() |
+| GC-GST ResNet50   | (8+16) * 1 * 2  | 65.0%      | 89.5%     | [link]() |
+| GC-TSN ResNet50   | 8 * 1 * 2  | 62.4%      | 87.9%     | [link]() |
+| GC-TSN ResNet50   | 16 * 1 * 2  | 64.8%      | 89.4%     | [link]() |
+| GC-TSN ResNet50   | (8+16) * 1 * 2  |66.3%      | 90.3%     | [link]() |
+| GC-TSM ResNet50   | 8 * 1 * 2  | 63.0%      | 88.4%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 2 | 64.9%      | 89.7%     | [link]() |
+| GC-TSM ResNet50   | (8+16) * 1 * 2 | 66.7%      | 90.6%     | [link]() |
+| GC-TSM ResNet50   | (8+16) * 3 * 2  | 67.5%      | 90.9%     | [link]() |
+| GC-TDN ResNet50   | 8 * 1 * 1  | 64.9%      | 89.7%     | [link]() |
+| GC-TDN ResNet50   | 16 * 1 * 1  | 65.9%      | 90.0%     | [link]() |
+| GC-TDN ResNet50   | (8+16) * 1 * 1  | 67.8%   | 91.2%     | [link]() |
 
 ## Testing 
 
