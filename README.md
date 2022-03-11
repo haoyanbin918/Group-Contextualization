@@ -22,6 +22,8 @@ We release the PyTorch code of the
   * [Something-Something](#something-something)
     + [Something-Something-V1](#something-something-v1)
     + [Something-Something-V2](#something-something-v2)
+  * [Diving48](#Diving48)
+    + [Diving48](#Diving48)
 - [Testing](#testing)
 - [Training](#training)
 - [Live Demo on NVIDIA Jetson Nano](#live-demo-on-nvidia-jetson-nano)
@@ -49,7 +51,7 @@ We have successfully trained on [Kinetics](https://deepmind.com/research/open-so
 
 ## Code
 
-This code is based on the [TSN](https://github.com/yjxiong/temporal-segment-networks), [TSM](https://github.com/mit-han-lab/temporal-shift-module), [GST](https://github.com/chenxuluo/GST-video) and [R(2+1)D](https://github.com/kenshohara/3D-ResNets-PyTorch) codebases. 
+This code is based on the [TSN](https://github.com/yjxiong/temporal-segment-networks), [TSM](https://github.com/mit-han-lab/temporal-shift-module), [GST](https://github.com/chenxuluo/GST-video) and [TDN](https://github.com/MCG-NJU/TDN) codebases. 
 
 
 ## Pretrained Models
