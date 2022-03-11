@@ -37,17 +37,12 @@ For video data pre-processing, you may need [ffmpeg](https://www.ffmpeg.org/).
 
 ## Data Preparation
 
-For GC-TSN, GC-GST, GC-TSM, we need to first extract videos into frames for all datasets (Kinetics-400, Something-Something V1 and V2, Diving48, ), following the [TSN](https://github.com/yjxiong/temporal-segment-networks) repo.
+For GC-TSN, GC-GST, GC-TSM, we need to first extract videos into frames for all datasets ([Kinetics-400](https://deepmind.com/research/open-source/open-source-datasets/kinetics/), [Something-Something V1](https://20bn.com/datasets/something-something/v1) and [V2](https://20bn.com/datasets/something-something/v2), [Diving48](http://www.svcl.ucsd.edu/projects/resound/dataset.html) and [EGTEA Gaze+](http://cbi.gatech.edu/fpv)), following the [TSN](https://github.com/yjxiong/temporal-segment-networks) repo. While for GC-TDN, the data process follows the backbone [TDN](https://github.com/MCG-NJU/TDN) work, which resizes the short edge of video to 320px and directly decodes video mp4 file during training/evaluation.
 
-We have successfully trained on [Kinetics](https://deepmind.com/research/open-source/open-source-datasets/kinetics/), [UCF101](http://crcv.ucf.edu/data/UCF101.php), [HMDB51](http://serre-lab.clps.brown.edu/resource/hmdb-a-large-human-motion-database/), [Something-Something-V1](https://20bn.com/datasets/something-something/v1) and [V2](https://20bn.com/datasets/something-something/v2), [Jester](https://20bn.com/datasets/jester) datasets with this codebase. Basically, the processing of video data can be summarized into 3 steps:
-
-- Extract frames from videos (refer to [tools/vid2img_kinetics.py](tools/vid2img_kinetics.py) for Kinetics example and [tools/vid2img_sthv2.py](tools/vid2img_sthv2.py) for Something-Something-V2 example)
-- Generate annotations needed for dataloader (refer to [tools/gen_label_kinetics.py](tools/gen_label_kinetics.py) for Kinetics example, [tools/gen_label_sthv1.py](tools/gen_label_sthv1.py) for Something-Something-V1 example, and [tools/gen_label_sthv2.py](tools/gen_label_sthv2.py) for Something-Something-V2 example)
-- Add the information to [ops/dataset_configs.py](ops/dataset_configs.py)
 
 ## Code
 
-This code is based on the [TSN](https://github.com/yjxiong/temporal-segment-networks), [TSM](https://github.com/mit-han-lab/temporal-shift-module), [GST](https://github.com/chenxuluo/GST-video) and [TDN](https://github.com/MCG-NJU/TDN) codebases. 
+GC-TSN/TSM/GST/TDN codes are based on [TSN](https://github.com/yjxiong/temporal-segment-networks), [TSM](https://github.com/mit-han-lab/temporal-shift-module), [GST](https://github.com/chenxuluo/GST-video) and [TDN](https://github.com/MCG-NJU/TDN) codebases, respectively. 
 
 
 ## Pretrained Models
@@ -56,43 +51,35 @@ Here we provide some of the pretrained models.
 
 ### Kinetics-400
 
-TSM outperforms I3D under the same dense sampling protocol. NL TSM model also achieves better performance than NL I3D model. Non-local module itself improves the accuracy by 1.5%.
-
-Here is a list of pre-trained models that we provide (see Table 3 of the paper). The accuracy is tested using full resolution setting following [here](https://github.com/facebookresearch/video-nonlocal-net). The list is keeping updating.
-
-| model             | n-frame     | Kinetics Acc. | checkpoint                                                   | test log                                                     |
-| ----------------- | ----------- | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| TSN ResNet50 (2D) | 8 * 10clips | 70.6%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_avg_segment5_e50.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_TSM_kinetics_RGB_resnet50_avg_segment5_e50.log) |
-| TSM ResNet50      | 8 * 10clips | 74.1%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e100_dense.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e100_dense.log) |
-| TSM ResNet50 NL   | 8 * 10clips | 75.6%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e100_dense_nl.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e100_dense_nl.log) |
-| TSM ResNext101    | 8 * 10clips | 76.3%         | TODO                                                         | TODO                                                         |
-| TSM MoileNetV2    | 8 * 10clips | 69.5%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_mobilenetv2_shift8_blockres_avg_segment8_e100_dense.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_TSM_kinetics_RGB_mobilenetv2_shift8_blockres_avg_segment8_e100_dense.log) |
-
-#### Uniform Sampling
-
-We also provide the checkpoints of TSN and TSM models using **uniform sampled frames** as in [Temporal Segment Networks](<https://arxiv.org/abs/1608.00859>) paper, which is more sample efficient and very useful for fine-tuning on other datasets. Our TSM module improves consistently over the TSN baseline.
-
-| model             | n-frame    | acc (1-crop) | acc (10-crop) | checkpoint                                                   | test log                                                     |
-| ----------------- | ---------- | ------------ | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| TSN ResNet50 (2D) | 8 * 1clip  | 68.8%        | 69.9%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_avg_segment5_e50.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_uniform_TSM_kinetics_RGB_resnet50_avg_segment5_e50.log) |
-| TSM ResNet50      | 8 * 1clip  | 71.2%        | 72.8%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e50.pth) | [link](https://file.lzhu.me/projects/tsm/models/log/testlog_TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e50.log) |
-| TSM ResNet50      | 16 * 1clip | 72.6%        | 73.7%         | [link](https://file.lzhu.me/projects/tsm/models/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment16_e50.pth) | -                                                            |
+| Model             | Frame * view * clip    | Top-1 Acc. | Top-5 Acc. | Checkpoint |
+| ----------------- | ----------- | ---------- | ----------- | ---------------- |
+| GC-TSN ResNet50   | 8 * 1 * 10  | 75.2%      | 92.1%     | [link]() |
+| GC-TSM ResNet50   | 8 * 1 * 10  | 75.4%      | 91.9%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 10 | 76.7%      | 92.9%     | [link]() |
+| GC-TSM ResNet50   | 16 * 3 * 10 | 77.1%      | 92.9%     | [link]() |
+| GC-TDN ResNet50   | 8 * 3 * 10  | 77.3%      | 93.2%     | [link]() |
+| GC-TDN ResNet50   | 16 * 3 * 10  | 78.8%      | 93.8%     | [link]() |
+| GC-TDN ResNet50   | (8+16) * 3 * 10  | 79.6%   | 94.1%     | [link]() |
 
 
 ### Something-Something
 
-Something-Something [V1](https://20bn.com/datasets/something-something/v1)&[V2](https://20bn.com/datasets/something-something) datasets are highly temporal-related. 
-
-Here we provide some of the models on the dataset. The accuracy is tested using both efficient setting (center crop * 1clip) and accuate setting ([full resolution](https://github.com/facebookresearch/video-nonlocal-net) * 2clip)
+Something-Something [V1](https://20bn.com/datasets/something-something/v1)&[V2](https://20bn.com/datasets/something-something) datasets are highly temporal-related. Here, we 
+use the 224×224 center crop for performance report.
 
 #### Something-Something-V1
 
-| model (ResNet50)  | n-frame, r | acc (full res * 2clip) | checkpoint                 | test log                                                     |
-| ------------- | ------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ECal-L-TSN  | 8, 16       | 48.2                   | [link](https://drive.google.com/file/d/1c8hrtADuqQA63tKCef8v7uF5v5wgf-E_/view?usp=sharing) | [link](https://drive.google.com/file/d/1hZ7-msCwcGZ2ExsZHCM2wQl2_xxToYmj/view?usp=sharing) |
-| ECal-L-TSN  | 16, 16      | 48.8                   | [link](https://drive.google.com/file/d/12hR-0CX66c904lstf-eXc7k7mHrn2cAL/view?usp=sharing) | [link](https://drive.google.com/file/d/1rQW8oWf6PQ4HQdgtngGpZ9DrQXdqT3AJ/view?usp=sharing) |
-| ECal-T-TSM  | 8, 16       | 49.7                   | [link](https://drive.google.com/file/d/1c8hrtADuqQA63tKCef8v7uF5v5wgf-E_/view?usp=sharing) | [link](https://drive.google.com/file/d/1N6w9W6zVCZ1sRg6A23QAeF4VVfnX16P7/view?usp=sharing) |
-| ECal-T-TSM  | 16, 16      | 51.4                   | [link](https://drive.google.com/file/d/1_iPaGw5kwGmehvFob6jGgHarDiJv3wnA/view?usp=sharing) | [link](https://drive.google.com/file/d/1uqa9vzU1tJEC7ki1yXzSoUCvQwbmeQ5I/view?usp=sharing) |
+| Model             | Frame * view * clip    | Top-1 Acc. | Top-5 Acc. | Checkpoint |
+| ----------------- | ----------- | ---------- | ----------- | ---------------- |
+| GC-TSN ResNet50   | 8 * 1 * 2  | 75.2%      | 92.1%     | [link]() |
+| GC-TSN ResNet50   | 16 * 1 * 2  | 75.2%      | 92.1%     | [link]() |
+| GC-TSN ResNet50   | (8+16) * 1 * 2  | 75.2%      | 92.1%     | [link]() |
+| GC-TSM ResNet50   | 8 * 1 * 10  | 75.4%      | 91.9%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 10 | 76.7%      | 92.9%     | [link]() |
+| GC-TSM ResNet50   | 16 * 3 * 10 | 77.1%      | 92.9%     | [link]() |
+| GC-TDN ResNet50   | 8 * 3 * 10  | 77.3%      | 93.2%     | [link]() |
+| GC-TDN ResNet50   | 16 * 3 * 10  | 78.8%      | 93.8%     | [link]() |
+| GC-TDN ResNet50   | (8+16) * 3 * 10  | 79.6%   | 94.1%     | [link]() |
 
 #### Something-Something-V2
 
