@@ -2,6 +2,7 @@
 Group Contextualization for Video Recognition
 
 ```
+This is official implementaion of paper "Group Contextualization for Video Recognition", which has been accepted by CVPR 2022. Paper link
 
 ```
 
