@@ -115,10 +115,10 @@ use the 224×224 center crop for performance report.
 ### EGTEA Gaze
 | Model             | Frame * view * clip    | Split1 |  Split2 | Split3 |
 | ----------------- | ----------- | ---------- | ----------- | ----------- |
-| GC-GST ResNet50   | 16 * 1 * 1  | 65.5%     | 61.6%    | 60.6%  |
-| GC-TSN ResNet50   | 16 * 1 * 1  | 66.4%     | 64.6%    | 61.4%  |
-| GC-TSM ResNet50   | 16 * 1 * 1  | 66.5%     | 66.1%    | 62.6%  |
-| GC-TDN ResNet50   | 16 * 1 * 1  | 65.0%     | 61.8%    | 61.0%  |
+| GC-GST ResNet50   | 8 * 1 * 1  | 65.5%     | 61.6%    | 60.6%  |
+| GC-TSN ResNet50   | 8 * 1 * 1  | 66.4%     | 64.6%    | 61.4%  |
+| GC-TSM ResNet50   | 8 * 1 * 1  | 66.5%     | 66.1%    | 62.6%  |
+| GC-TDN ResNet50   | 8 * 1 * 1  | 65.0%     | 61.8%    | 61.0%  |
 
 ## Train 
 
