@@ -5,9 +5,9 @@ This is official implementaion of paper "Group Contextualization for Video Recog
 </div>
 
 
-## Overview
-
-We release the PyTorch code of the 
+## Updates
+### March 11, 2022
+* Release this V1 version (the version used in paper) to public.
 
 ## Content
 
@@ -30,17 +30,14 @@ We release the PyTorch code of the
 ## Prerequisites
 
 The code is built with following libraries:
-
-- [PyTorch](https://pytorch.org/) 1.0 or higher
-- [TensorboardX](https://github.com/lanpa/tensorboardX)
-- [tqdm](https://github.com/tqdm/tqdm.git)
-- [scikit-learn](https://scikit-learn.org/stable/)
+* PyTorch >= 1.7, torchvision
+* tensorboardx
 
 For video data pre-processing, you may need [ffmpeg](https://www.ffmpeg.org/).
 
 ## Data Preparation
 
-We need to first extract videos into frames for fast reading. Please refer to [TSN](https://github.com/yjxiong/temporal-segment-networks) repo for the detailed guide of data pre-processing.
+For GC-TSN, GC-GST, GC-TSM, we need to first extract videos into frames for all datasets (Kinetics-400, Something-Something V1 and V2, Diving48, ), following the [TSN](https://github.com/yjxiong/temporal-segment-networks) repo.
 
 We have successfully trained on [Kinetics](https://deepmind.com/research/open-source/open-source-datasets/kinetics/), [UCF101](http://crcv.ucf.edu/data/UCF101.php), [HMDB51](http://serre-lab.clps.brown.edu/resource/hmdb-a-large-human-motion-database/), [Something-Something-V1](https://20bn.com/datasets/something-something/v1) and [V2](https://20bn.com/datasets/something-something/v2), [Jester](https://20bn.com/datasets/jester) datasets with this codebase. Basically, the processing of video data can be summarized into 3 steps:
 
@@ -58,19 +55,6 @@ This code is based on the [TSN](https://github.com/yjxiong/temporal-segment-netw
 Here we provide some of the pretrained models. 
 
 ### Kinetics-400
-
-#### Dense Sample
-
-In the latest version of our paper, we reported the results of TSM trained and tested with **I3D dense sampling** (Table 1&4, 8-frame and 16-frame), using the same training and testing hyper-parameters as in [Non-local Neural Networks](https://arxiv.org/abs/1711.07971) paper to directly compare with I3D. 
-
-We compare the I3D performance reported in Non-local paper:
-
-| method          | n-frame      | Kinetics Acc. |
-| --------------- | ------------ | ------------- |
-| I3D-ResNet50    | 32 * 10clips | 73.3%         |
-| TSM-ResNet50    | 8 * 10clips  | **74.1%**     |
-| I3D-ResNet50 NL | 32 * 10clips | 74.9%         |
-| TSM-ResNet50 NL | 8 * 10clips  | **75.6%**     |
 
 TSM outperforms I3D under the same dense sampling protocol. NL TSM model also achieves better performance than NL I3D model. Non-local module itself improves the accuracy by 1.5%.
 
