@@ -20,10 +20,12 @@ This is official implementaion of paper "Group Contextualization for Video Recog
     + [Something-Something-V1](#something-something-v1)
     + [Something-Something-V2](#something-something-v2)
   * [Diving48](#Diving48)
-  * [EGTEA-Gaze+](#EGTEA-Gaze+)
-- [Testing](#testing)
-- [Training](#training)
-- [Live Demo on NVIDIA Jetson Nano](#live-demo-on-nvidia-jetson-nano)
+  * [EGTEA Gaze+](#EGTEA-Gaze+)
+- [Train](#Train)
+- [Test](#Test)
+- [Contibutors](#Contributors)
+- [Citing](#Citing)
+- [Acknowledgement](#Acknowledgement)
 
 ## Prerequisites
 
@@ -110,7 +112,7 @@ use the 224×224 center crop for performance report.
 | GC-TDN ResNet50   | 16 * 1 * 1  | 87.6%     | [link]() |
 
 
-### EGTEA-Gaze+
+### EGTEA Gaze+
 | Model             | Frame * view * clip    | Split1 |  Split2 | Split3 |
 | ----------------- | ----------- | ---------- | ----------- | ----------- |
 | GC-GST ResNet50   | 16 * 1 * 1  | 65.5%     | 61.6%    | 60.6%  |
@@ -150,3 +152,11 @@ GC codes are jointly written and owned by [Dr. Yanbin Hao](https://haoyanbin918.
   journal={CVPR 2022},
 }
 ```
+
+## Acknowledgement
+Thanks for the following Github projects:
+- https://github.com/yjxiong/temporal-segment-networks
+- https://github.com/mit-han-lab/temporal-shift-module
+- https://github.com/chenxuluo/GST-video
+- https://github.com/MCG-NJU/TDN
+
