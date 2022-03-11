@@ -103,6 +103,14 @@ use the 224×224 center crop for performance report.
 | GC-TDN ResNet50   | 16 * 1 * 1  | 65.9%      | 90.0%     | [link]() |
 | GC-TDN ResNet50   | (8+16) * 1 * 1  | 67.8%   | 91.2%     | [link]() |
 
+### Diving48
+| Model             | Frame * view * clip    | Top-1 Acc. |  Checkpoint |
+| ----------------- | ----------- | ---------- | ----------- | ---------------- |
+| GC-GST ResNet50   | 16 * 1 * 1  | 82.5%     | [link]() |
+| GC-TSN ResNet50   | 16 * 1 * 1  | 86.8%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 1  | 87.2%     | [link]() |
+| GC-TDN ResNet50   | 16 * 1 * 1  | 87.6%     | [link]() |
+
 ## Testing 
 
 For example, to test the downloaded pretrained models on Kinetics, you can run `scripts/test_tsm_kinetics_rgb_8f.sh`. The scripts will test both TSN and TSM on 8-frame setting by running:
