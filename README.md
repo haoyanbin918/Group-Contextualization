@@ -65,7 +65,7 @@ Here we provide some of the pretrained models.
 ### Something-Something
 
 Something-Something [V1](https://20bn.com/datasets/something-something/v1)&[V2](https://20bn.com/datasets/something-something) datasets are highly temporal-related. Here, we 
-use the 224×224 center crop for performance report.
+use the 224×224 resolution for performance report.
 
 #### Something-Something-V1
 
