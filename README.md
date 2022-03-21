@@ -7,7 +7,7 @@ This is official implementaion of paper "Group Contextualization for Video Recog
 
 ## Updates
 ### March 11, 2022
-* Release this V1 version (the version used in paper) to public.
+* Release this V1 version (the version used in paper) to public. Complete codes and models will be released soon.
 
 ## Content
 
