@@ -123,11 +123,6 @@ use the 224×224 resolution for performance report.
 ## Train 
 
  ```
-  python main.py something RGB \
-       --arch resnet50 --num_segments 8 \
-       --gd 20 --lr 0.01 --lr_steps 20 40 --epochs 50 \
-       --batch-size 64 -j 16 --dropout 0.5 --consensus_type=avg --eval-freq=1 \
-       --shift --shift_div=8 --shift_place=blockres --npb
   ```
 
 ## Test 
@@ -135,10 +130,6 @@ use the 224×224 resolution for performance report.
 We provided several examples to train TSM with this repo:
 
 ```
-python test_models.py kinetics \
-    --weights=pretrained/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e100_dense.pth \
-    --test_segments=8 --test_crops=3 \
-    --batch_size=8 --dense_sample --full_res
 ```
 
 ## Contributors
