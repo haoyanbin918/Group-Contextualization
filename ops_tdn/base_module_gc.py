@@ -5,7 +5,10 @@ import math
 import torch
 import torch.utils.model_zoo as model_zoo
 
-from ops.Calibrator2D import GC_L33D, GC_T13D, GC_S23DD, GC_CLLD
+import sys
+sys.path.append('..')
+
+from nets.Calibrator2D import GC_L33D, GC_T13D, GC_S23DD, GC_CLLD
 
 __all__ = ['FBResNet', 'fbresnet50', 'fbresnet101']
 
