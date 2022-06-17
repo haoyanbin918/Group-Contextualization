@@ -26,7 +26,7 @@ from torch.utils.data import BatchSampler
 import torchvision
 import pdb
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1'
 
 best_prec1 = 0
 

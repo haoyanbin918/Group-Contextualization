@@ -23,7 +23,7 @@ from tensorboardX import SummaryWriter
 
 best_prec1 = 0
 best_prec1_test = 0
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
 
 def main():
     global args, best_prec1, best_prec1_test
