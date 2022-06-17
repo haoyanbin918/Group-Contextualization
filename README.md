@@ -121,9 +121,7 @@ use the 224×224 resolution for performance report.
 | GC-TDN ResNet50   | 8 * 1 * 1  | 65.0%     | 61.8%    | 61.0%  |
 
 ## Train 
-
- ```
-  ```
+For different backbones, please use their corresponding training code, like 'train_tsn.sh' with the usage of TSN.
 
 ## Test 
 
