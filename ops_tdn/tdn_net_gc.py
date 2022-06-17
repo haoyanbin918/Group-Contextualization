@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn.init import normal_, constant_
 import torch.nn.functional as F
-from ops.base_module_gc import *
+from ops_tdn.base_module_gc import *
 
 
 class TDN_Net(nn.Module):

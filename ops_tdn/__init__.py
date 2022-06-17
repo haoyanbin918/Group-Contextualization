@@ -1,1 +1,1 @@
-from ops.basic_ops import *
+from ops_tdn.basic_ops import *
