@@ -26,7 +26,7 @@ from torch.utils.data import BatchSampler
 import torchvision
 import pdb
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1, 2, 3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1'
 
 best_prec1 = 0
 
@@ -43,7 +43,7 @@ def main():
     # print(num_class, args.train_list, args.val_list, args.root_path, prefix)
     # return 
     full_arch_name = args.arch
-    args.store_name = '_'.join(['V2_TDN_', args.dataset, args.modality, full_arch_name, args.consensus_type, 'segment%d' % args.num_segments, 'e{}'.format(args.epochs)])
+    args.store_name = '_'.join(['GC_TDN_', args.dataset, args.modality, full_arch_name, args.consensus_type, 'segment%d' % args.num_segments, 'e{}'.format(args.epochs)])
     if args.pretrain != 'imagenet':
         args.store_name += '_{}'.format(args.pretrain)
     if args.dense_sample:

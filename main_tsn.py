@@ -23,7 +23,7 @@ from tensorboardX import SummaryWriter
 
 best_prec1 = 0
 best_prec1_test = 0
-os.environ['CUDA_VISIBLE_DEVICES'] = '4,5,6,7'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 def main():
     global args, best_prec1, best_prec1_test
@@ -33,9 +33,9 @@ def main():
                                                                                                       args.modality)
     # ---args---
     if args.element_filter:
-        full_arch_name = 'C2D_{}_{}_{}'.format(args.stage, args.net, args.arch)
+        full_arch_name = 'TSN_{}_{}'.format(args.net, args.arch)
     else:
-        full_arch_name = 'C2D_{}'.format(args.arch)
+        full_arch_name = 'TSN_{}'.format(args.arch)
     args.store_name = '_'.join(
         [full_arch_name, args.dataset, args.modality, args.consensus_type, 'segment%d' % args.num_segments,
          'e{}'.format(args.epochs)])

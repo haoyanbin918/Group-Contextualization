@@ -12,7 +12,7 @@ import torch.optim
 from torch.nn.utils import clip_grad_norm_
 
 from ops_tsntsmgst.dataset import TSNDataSet
-from ops_tsntsmgst.models_tsm import VideoNet
+from ops_tsntsmgst.models_gst import VideoNet
 from ops_tsntsmgst.transforms import *
 from opts import parser
 from ops_tsntsmgst import dataset_config
@@ -23,7 +23,7 @@ from tensorboardX import SummaryWriter
 
 best_prec1 = 0
 best_prec1_test = 0
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '4,5,6,7'
 
 def main():
     global args, best_prec1, best_prec1_test
@@ -33,11 +33,11 @@ def main():
                                                                                                       args.modality)
     # ---args---
     if args.element_filter:
-        full_arch_name = 'TSM_{}_{}'.format(args.net, args.arch)
+        full_arch_name = 'GST_{}_{}'.format(args.net, args.arch)
     else:
-        full_arch_name = 'TSM_{}'.format(args.arch)
+        full_arch_name = 'GST_{}'.format(args.arch)
     args.store_name = '_'.join(
-        [full_arch_name, args.dataset, args.modality, args.consensus_type, 'segment%d' % args.num_segments,
+        [full_arch_name, 'a%db%d'%(args.alpha, args.beta), args.dataset, args.modality, args.consensus_type, 'segment%d' % args.num_segments,
          'e{}'.format(args.epochs)])
     # if args.pretrain != 'imagenet':
     #     args.store_name += '_{}'.format(args.pretrain)
@@ -93,7 +93,7 @@ def main():
                 consensus_type=args.consensus_type,
                 dropout=args.dropout,
                 partial_bn=not args.no_partialbn,
-                is_shift=args.shift, shift_div=args.shift_div, shift_place=args.shift_place,
+                alpha=args.alpha, beta=args.beta,
                 ef_lr5=args.ef_lr5,
                 # fc_lr5=not (args.tune_from and args.dataset in args.tune_from),
                 non_local=args.non_local,
@@ -104,6 +104,7 @@ def main():
                 target_transforms=target_transforms)
 
     crop_size = model.scale_size if args.full_res else model.input_size # 224 or 256 (scale_size)
+    crop_size_val2 = model.input_size
     scale_size = model.scale_size # 256
     input_mean = model.input_mean
     input_std = model.input_std
@@ -119,8 +120,6 @@ def main():
                                 weight_decay=args.weight_decay)
 
     if args.resume:
-        if args.temporal_pool:  # early temporal pool so that we can load the state_dict
-            make_temporal_pool(model.module.base_model, args.num_segments)
         if os.path.isfile(args.resume):
             print(("=> loading checkpoint '{}'".format(args.resume)))
             checkpoint = torch.load(args.resume)
@@ -133,35 +132,35 @@ def main():
         else:
             print(("=> no checkpoint found at '{}'".format(args.resume)))
 
-    # if args.tune_from:
-    #     print(("=> fine-tuning from '{}'".format(args.tune_from)))
-    #     sd = torch.load(args.tune_from)
-    #     sd = sd['state_dict']
-    #     model_dict = model.state_dict()
-    #     if 'TSM' in args.tune_from:
-    #         replace_dict = []
-    #         for k, v in sd.items():
-    #             if k not in model_dict and k.replace('.net', '') in model_dict:
-    #                 print('=> Load after remove .net: ', k)
-    #                 replace_dict.append((k, k.replace('.net', '')))
-    #         for k, v in model_dict.items():
-    #             if k not in sd and k.replace('.net', '') in sd:
-    #                 print('=> Load after adding .net: ', k)
-    #                 replace_dict.append((k.replace('.net', ''), k))
+    if args.tune_from:
+        print(("=> fine-tuning from '{}'".format(args.tune_from)))
+        sd = torch.load(args.tune_from)
+        sd = sd['state_dict']
+        model_dict = model.state_dict()
+        # if 'TSM' in args.tune_from:
+        #     replace_dict = []
+        #     for k, v in sd.items():
+        #         if k not in model_dict and k.replace('.net', '') in model_dict:
+        #             print('=> Load after remove .net: ', k)
+        #             replace_dict.append((k, k.replace('.net', '')))
+        #     for k, v in model_dict.items():
+        #         if k not in sd and k.replace('.net', '') in sd:
+        #             print('=> Load after adding .net: ', k)
+        #             replace_dict.append((k.replace('.net', ''), k))
 
-    #         for k, k_new in replace_dict:
-    #             sd[k_new] = sd.pop(k)
-    #     keys1 = set(list(sd.keys()))
-    #     keys2 = set(list(model_dict.keys()))
-    #     set_diff = (keys1 - keys2) | (keys2 - keys1)
-    #     print('#### Notice: keys that failed to load: {}'.format(set_diff))
-    #     if args.dataset not in args.tune_from:  # new dataset
-    #         print('=> New dataset, do not load fc weights')
-    #         sd = {k: v for k, v in sd.items() if 'fc' not in k}
-    #     # if args.modality == 'Flow' and 'Flow' not in args.tune_from:
-    #     #     sd = {k: v for k, v in sd.items() if 'conv1.weight' not in k}
-    #     model_dict.update(sd)
-    #     model.load_state_dict(model_dict)
+        #     for k, k_new in replace_dict:
+        #         sd[k_new] = sd.pop(k)
+        keys1 = set(list(sd.keys()))
+        keys2 = set(list(model_dict.keys()))
+        set_diff = (keys1 - keys2) | (keys2 - keys1)
+        print('#### Notice: keys that failed to load: {}'.format(set_diff))
+        if args.dataset not in args.tune_from:  # new dataset
+            print('=> New dataset, do not load fc weights')
+            sd = {k: v for k, v in sd.items() if 'fc' not in k}
+        # if args.modality == 'Flow' and 'Flow' not in args.tune_from:
+        #     sd = {k: v for k, v in sd.items() if 'conv1.weight' not in k}
+        model_dict.update(sd)
+        model.load_state_dict(model_dict)
 
     # if args.temporal_pool and not args.resume:
     #     make_temporal_pool(model.module.base_model, args.num_segments)
@@ -197,17 +196,17 @@ def main():
     if args.dense_sample:
         val_batch_size = args.batch_size//2
     elif args.twice_sample:
-        val_batch_size = int(args.batch_size*2.5)
+        val_batch_size = int(args.batch_size*2)
     else:
-        val_batch_size = args.batch_size*5
+        val_batch_size = args.batch_size*4
     val_batch_size = max(1, val_batch_size)
     
-    # test_list = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/%s_tsm/test.txt'%args.dataset
     val_loader = torch.utils.data.DataLoader(
         TSNDataSet(args.root_path, args.val_list, num_segments=args.num_segments,
                    new_length=data_length,
                    modality=args.modality,
                    image_tmpl=prefix,
+                   test_mode=True,
                    random_shift=False,
                    transform=torchvision.transforms.Compose([
                        GroupScale(int(scale_size)),
@@ -264,6 +263,7 @@ def main():
                 'optimizer': optimizer.state_dict(),
                 'best_prec1': best_prec1,
             }, is_best)
+
 
 def train(train_loader, model, criterion, optimizer, epoch, log, tf_writer):
     batch_time = AverageMeter()
@@ -393,6 +393,7 @@ def validate(val_loader, model, criterion, epoch, log=None, tf_writer=None):
         tf_writer.add_scalar('acc/val_top5', top5.avg, epoch)
 
     return top1.avg
+
 
 def save_checkpoint(state, is_best):
     filename = '%s/%s/ckpt.pth.tar' % (args.root_model, args.store_name)
