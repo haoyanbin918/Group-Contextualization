@@ -11,12 +11,12 @@ import torch.backends.cudnn as cudnn
 import torch.optim
 from torch.nn.utils import clip_grad_norm_
 
-from ops.dataset import TSNDataSet
+from ops_tsntsmgst.dataset import TSNDataSet
 from ops_tsntsmgst.models_tsn import VideoNet
-from ops.transforms import *
+from ops_tsntsmgst.transforms import *
 from opts import parser
-from ops import dataset_config
-from ops.utils import AverageMeter, accuracy
+from ops_tsntsmgst import dataset_config
+from ops_tsntsmgst.utils import AverageMeter, accuracy
 # from ops.temporal_shift import make_temporal_pool
 
 from tensorboardX import SummaryWriter
