@@ -1,7 +1,7 @@
 import torch.nn as nn
-from ops.transforms import *
+from ops_tsntsmgst.transforms import *
 from torch.nn.init import normal_, constant_
-from ops.basic_ops import ConsensusModule
+from ops_tsntsmgst.basic_ops import ConsensusModule
 
 import sys
 from importlib import import_module
@@ -12,7 +12,7 @@ class VideoNet(nn.Module):
                 backbone='resnet50', net=None, consensus_type='avg',
                 dropout=0.5, partial_bn=True, print_spec=True, pretrain='imagenet',
                 is_shift=False, shift_div=8, shift_place='blockres', ef_lr5=False, fc_lr5=False,
-                temporal_pool=False, non_local=False, element_filter=False, stage='S3B', cdiv=2,
+                temporal_pool=False, non_local=False, element_filter=False, stage='S2B', cdiv=2,
                 loop=False, target_transforms=None):
         super(VideoNet, self).__init__()
         self.num_segments = num_segments
@@ -156,6 +156,7 @@ class VideoNet(nn.Module):
 
         ef_weight = []
         ef_bias = []
+        ef_bn = []
 
         ef_lr_weight = []
         ef_lr_bias = []
@@ -187,7 +188,10 @@ class VideoNet(nn.Module):
                         if len(ps)==2:
                             normal_bias.append(ps[1])
                 elif isinstance(m, torch.nn.BatchNorm3d) or isinstance(m, torch.nn.BatchNorm2d) or isinstance(m, torch.nn.BatchNorm1d):
-                    bn.extend(list(m.parameters()))
+                    if self.ef_lr5:
+                        ef_bn.extend(list(m.parameters()))
+                    else:
+                        bn.extend(list(m.parameters()))
                 elif len(m._modules) == 0:
                     if len(list(m.parameters())) > 0:
                         raise ValueError("New atomic module type: {} in eft blocks. Need to give it a learning policy".format(type(m)))
@@ -241,18 +245,20 @@ class VideoNet(nn.Module):
             {'params': custom_ops, 'lr_mult': 1, 'decay_mult': 1,
              'name': "custom_ops"},
             # for ef
-            {'params': ef_weight, 'lr_mult': 2, 'decay_mult': 1,
+            {'params': ef_weight, 'lr_mult': 5, 'decay_mult': 1,
              'name': "ef_weight"},
-            {'params': ef_bias, 'lr_mult': 4, 'decay_mult': 0,
+            {'params': ef_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "ef_bias"},
-            {'params': ef_lr_weight, 'lr_mult': 2, 'decay_mult': 1,
-             'name': "ef_weight"},
-            {'params': ef_lr_bias, 'lr_mult': 4, 'decay_mult': 0,
-             'name': "ef_bias"},
+            {'params': ef_bn, 'lr_mult': 5, 'decay_mult': 0,
+             'name': "ef_bn"},
+            {'params': ef_lr_weight, 'lr_mult': 5, 'decay_mult': 1,
+             'name': "ef_lr_weight"},
+            {'params': ef_lr_bias, 'lr_mult': 5, 'decay_mult': 0,
+             'name': "ef_lr_bias"},
             # for fc
             {'params': lr5_weight, 'lr_mult': 5, 'decay_mult': 1,
              'name': "lr5_weight"},
-            {'params': lr10_bias, 'lr_mult': 10, 'decay_mult': 0,
+            {'params': lr10_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "lr10_bias"},
         ]
 

@@ -207,8 +207,8 @@ class TSNDataSet(data.Dataset):
                 if p < record.num_frames:
                     p += 1
 
-        process_data = self.transform(images)
-        return process_data, record.label
+        process_data, record_label = self.transform((images, record.label))
+        return process_data, record_label
 
     def __len__(self):
         return len(self.video_list)

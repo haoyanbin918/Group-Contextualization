@@ -11,71 +11,8 @@ import os
 ### CUSTOM_DATASET
 """
 """ BASKETBALL """
-ROOT_DATASET1 = "/vireo00/yanbin2/Sport_Video/videos_our/"
-frameFolder1 = 'Frames256_fined'
-
-ROOT_DATASET2 = "/data/yanbin/Video_Datasets/"
-
-def return_epic55verb(modality):
-    filename_categories = 125
-    if modality == 'RGB':
-        root_data = ROOT_DATASET2 +'EPIC_KITCHENS/'
-        filename_imglist_train = root_data + 'trainValTest/train_55_verb.txt'
-        filename_imglist_val = root_data + 'trainValTest/val_55_verb.txt'
-        prefix = 'frame_{:010d}.jpg'
-    else:
-        raise NotImplementedError('no such modality:' + modality)
-    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
-
-def return_epic55noun(modality):
-    filename_categories = 352
-    if modality == 'RGB':
-        root_data = ROOT_DATASET2 +'EPIC_KITCHENS/'
-        filename_imglist_train = root_data + 'trainValTest/train_55_noun.txt'
-        filename_imglist_val = root_data + 'trainValTest/val_55_noun.txt'
-        prefix = 'frame_{:010d}.jpg'
-    else:
-        raise NotImplementedError('no such modality:' + modality)
-    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
-
-def return_basketball(modality):
-    # filename_categories = 'basketball_allframe256_v2j/basketball_classInd.txt'
-    filename_categories = 8
-    if modality == 'RGB':
-        root_data = ROOT_DATASET1 + frameFolder1
-
-        filename_imglist_train = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/basketball_tsm/train.txt'
-        filename_imglist_val   = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/basketball_tsm/val.txt'
-        prefix = 'img_{:05d}.jpg'
-    else:
-        raise NotImplementedError('no such modality:' + modality)
-    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
-
-
-def return_soccer(modality):
-    filename_categories = 10
-    # filename_categories = 'soccer_allframe256_v2j/soccer_classInd.txt'
-    if modality == 'RGB':
-        root_data = ROOT_DATASET1 + frameFolder1
-        filename_imglist_train = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/soccer_tsm/train.txt'
-        filename_imglist_val = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/soccer_tsm/val.txt'
-        prefix = 'img_{:05d}.jpg'
-    else:
-        raise NotImplementedError('no such modality:' + modality)
-    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
-"""-------------------------------------------------------------------------------------"""
-
-def return_diving48(modality):
-    filename_categories = 48
-    # filename_categories = 'soccer_allframe256_v2j/soccer_classInd.txt'
-    if modality == 'RGB':
-        root_data = ROOT_DATASET2
-        filename_imglist_train = root_data + 'diving48/trainValTest/train.txt'
-        filename_imglist_val = root_data + 'diving48/trainValTest/val.txt'
-        prefix = '{:05d}.jpg'
-    else:
-        raise NotImplementedError('no such modality:' + modality)
-    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
+ROOT_DATASET = "/data1/yanbin/"
+ROOT_DATASET2 = "/home/vip/Datasets/"
 
 def return_egaze1(modality):
     filename_categories = 106
@@ -113,6 +50,46 @@ def return_egaze3(modality):
         raise NotImplementedError('no such modality:' + modality)
     return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
 
+def return_diving48(modality):
+    filename_categories = 48
+    # filename_categories = 'soccer_allframe256_v2j/soccer_classInd.txt'
+    if modality == 'RGB':
+        root_data = ROOT_DATASET
+        filename_imglist_train = root_data + 'diving48/trainValTest/train.txt'
+        filename_imglist_val = root_data + 'diving48/trainValTest/val.txt'
+        prefix = '{:05d}.jpg'
+    else:
+        raise NotImplementedError('no such modality:' + modality)
+    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
+
+
+def return_basketball(modality):
+    # filename_categories = 'basketball_allframe256_v2j/basketball_classInd.txt'
+    filename_categories = 8
+    if modality == 'RGB':
+        root_data = ROOT_DATASET
+
+        filename_imglist_train = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/basketball_tsm/train.txt'
+        filename_imglist_val   = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/basketball_tsm/val.txt'
+        prefix = 'img_{:05d}.jpg'
+    else:
+        raise NotImplementedError('no such modality:' + modality)
+    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
+
+
+def return_soccer(modality):
+    filename_categories = 10
+    # filename_categories = 'soccer_allframe256_v2j/soccer_classInd.txt'
+    if modality == 'RGB':
+        root_data = ROOT_DATASET + frameFolder1
+        filename_imglist_train = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/soccer_tsm/train.txt'
+        filename_imglist_val = '/vireo00/yanbin2/Sport_Video/videos_our/TraValTes/soccer_tsm/val.txt'
+        prefix = 'img_{:05d}.jpg'
+    else:
+        raise NotImplementedError('no such modality:' + modality)
+    return filename_categories, filename_imglist_train, filename_imglist_val, root_data, prefix
+"""-------------------------------------------------------------------------------------"""
+
 
 def return_ucf101(modality):
     # filename_categories = 'UCF101/labels/classInd.txt'
@@ -149,9 +126,9 @@ def return_somethingv1(modality):
     # filename_categories = 'something/v1/category.txt'
     filename_categories = 174
     if modality == 'RGB':
-        root_data = ROOT_DATASET2
-        filename_imglist_train = root_data + 'some_some_v1/trainValTest/train.txt'
-        filename_imglist_val = root_data + 'some_some_v1/trainValTest/val.txt'
+        root_data = ROOT_DATASET
+        filename_imglist_train = root_data+'some_some_v1/trainValTest/train.txt'
+        filename_imglist_val = root_data+'some_some_v1/trainValTest/val.txt'
         prefix = '{:05d}.jpg'
     # elif modality == 'Flow':
     #     root_data = ROOT_DATASET + 'something/v1/20bn-something-something-v1-flow'
@@ -168,9 +145,9 @@ def return_somethingv2(modality):
     # filename_categories = 'something/v2/category.txt'
     filename_categories = 174
     if modality == 'RGB':
-        root_data = ROOT_DATASET2
-        filename_imglist_train = root_data + 'some_some_v2/trainValTest/train.txt'
-        filename_imglist_val = root_data + 'some_some_v2/trainValTest/val.txt'
+        root_data = ROOT_DATASET
+        filename_imglist_train = root_data+ 'some_some_v2/trainValTest/train.txt'
+        filename_imglist_val = root_data+ 'some_some_v2/trainValTest/val.txt'
         prefix = '{:06d}.jpg'
     # elif modality == 'Flow':
     #     root_data = ROOT_DATASET + 'something/v2/20bn-something-something-v2-flow'
@@ -197,7 +174,7 @@ def return_jester(modality):
 def return_kinetics(modality):
     filename_categories = 400
     if modality == 'RGB':
-        root_data = '/data2/yanbin/Video_Datasets/'
+        root_data = ROOT_DATASET
         filename_imglist_train = root_data + 'kinetics400_mmlab/trainValTest/train.txt'
         filename_imglist_val = root_data + 'kinetics400_mmlab/trainValTest/val.txt'
         prefix = 'img_{:05d}.jpg'
@@ -209,7 +186,7 @@ def return_kinetics(modality):
 def return_kineticsmini1(modality):
     filename_categories = 100
     if modality == 'RGB':
-        root_data = ROOT_DATASET2
+        root_data = ROOT_DATASET
         filename_imglist_train = '/data/vireodata/video_data/kinetics400/mini_kinetics_100/train.txt'
         filename_imglist_val = '/data/vireodata/video_data/kinetics400/mini_kinetics_100/val.txt'
         prefix = 'img_{:05d}.jpg'
@@ -220,7 +197,7 @@ def return_kineticsmini1(modality):
 def return_kineticsmini2(modality):
     filename_categories = 200
     if modality == 'RGB':
-        root_data = ROOT_DATASET2
+        root_data = ROOT_DATASET
         filename_imglist_train = '/data/vireodata/video_data/kinetics400/mini-kinetics-200/train.txt'
         filename_imglist_val = '/data/vireodata/video_data/kinetics400/mini-kinetics-200/val.txt'
         prefix = 'img_{:05d}.jpg'
@@ -233,9 +210,8 @@ def return_dataset(dataset, modality):
                    'ucf101': return_ucf101, 'hmdb51': return_hmdb51,
                    'kinetics': return_kinetics, 'kineticsmini1': return_kineticsmini1, 'kineticsmini2': return_kineticsmini2,
                    ### CUSTOM_DATASET
-                   'basketball': return_basketball, 'soccer': return_soccer,
-                   'diving48': return_diving48, 'egaze1': return_egaze1, 'egaze2': return_egaze2, 'egaze3': return_egaze3,
-                   'epic55verb': return_epic55verb, 'epic55noun': return_epic55noun
+                   'basketball': return_basketball, 'soccer': return_soccer, 'diving48': return_diving48,
+                   'egaze1': return_egaze1, 'egaze2': return_egaze2, 'egaze3': return_egaze3
                    }
     if dataset in dict_single:
         file_categories, file_imglist_train, file_imglist_val, root_data, prefix = dict_single[dataset](modality)

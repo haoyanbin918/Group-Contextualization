@@ -1,7 +1,7 @@
 import torch.nn as nn
-from ops.transforms import *
+from ops_tsntsmgst.transforms import *
 from torch.nn.init import normal_, constant_
-from ops.basic_ops import ConsensusModule
+from ops_tsntsmgst.basic_ops import ConsensusModule
 
 import sys
 from importlib import import_module
@@ -149,18 +149,17 @@ class VideoNet(nn.Module):
 
         ef_weight = []
         ef_bias = []
+        ef_bn = []
 
         ef_lr_weight = []
         ef_lr_bias = []
-
-        ef_bn = []
 
         conv_cnt = 0
         bn_cnt = 0
         for name, m in self.named_modules():
             if 'eft' in name:
                 if isinstance(m, torch.nn.Conv1d) or isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.Conv3d) or isinstance(m, torch.nn.ConvTranspose3d):
-                    if True:
+                    if self.ef_lr5:
                         ps = list(m.parameters())
                         ef_weight.append(ps[0])
                         if len(ps)==2:
@@ -171,7 +170,7 @@ class VideoNet(nn.Module):
                         if len(ps)==2:
                             normal_bias.append(ps[1])
                 elif isinstance(m, torch.nn.Linear):
-                    if True:
+                    if self.ef_lr5:
                         ps = list(m.parameters())
                         ef_lr_weight.append(ps[0])
                         if len(ps)==2:
@@ -182,7 +181,10 @@ class VideoNet(nn.Module):
                         if len(ps)==2:
                             normal_bias.append(ps[1])
                 elif isinstance(m, torch.nn.BatchNorm3d) or isinstance(m, torch.nn.BatchNorm2d) or isinstance(m, torch.nn.BatchNorm1d):
-                    ef_bn.extend(list(m.parameters()))
+                    if self.ef_lr5:
+                        ef_bn.extend(list(m.parameters()))
+                    else:
+                        bn.extend(list(m.parameters()))
                 elif len(m._modules) == 0:
                     if len(list(m.parameters())) > 0:
                         raise ValueError("New atomic module type: {} in eft blocks. Need to give it a learning policy".format(type(m)))
@@ -240,16 +242,16 @@ class VideoNet(nn.Module):
              'name': "ef_weight"},
             {'params': ef_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "ef_bias"},
-            {'params': ef_lr_weight, 'lr_mult': 5, 'decay_mult': 1,
-             'name': "ef_weight"},
-            {'params': ef_lr_bias, 'lr_mult': 5, 'decay_mult': 0,
-             'name': "ef_bias"},
             {'params': ef_bn, 'lr_mult': 5, 'decay_mult': 0,
-                 'name': "ef_bn"},
+             'name': "ef_bn"},
+            {'params': ef_lr_weight, 'lr_mult': 5, 'decay_mult': 1,
+             'name': "ef_lr_weight"},
+            {'params': ef_lr_bias, 'lr_mult': 5, 'decay_mult': 0,
+             'name': "ef_lr_bias"},
             # for fc
             {'params': lr5_weight, 'lr_mult': 5, 'decay_mult': 1,
              'name': "lr5_weight"},
-            {'params': lr10_bias, 'lr_mult': 10, 'decay_mult': 0,
+            {'params': lr10_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "lr10_bias"},
         ]
 

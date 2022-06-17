@@ -1,7 +1,7 @@
 import torch.nn as nn
-from ops.transforms import *
+from ops_tsntsmgst.transforms import *
 from torch.nn.init import normal_, constant_
-from ops.basic_ops import ConsensusModule
+from ops_tsntsmgst.basic_ops import ConsensusModule
 
 import sys
 from importlib import import_module
@@ -132,42 +132,48 @@ class VideoNet(nn.Module):
 
         ef_weight = []
         ef_bias = []
+        ef_bn = []
+
+        ef_lr_weight = []
+        ef_lr_bias = []
 
         conv_cnt = 0
         bn_cnt = 0
-        for m, p in self.named_modules():
-            if 'eft' in m or 'efs' in m or 'efc' in m:
-                if isinstance(p, torch.nn.Conv1d) or isinstance(p, torch.nn.Conv2d) or isinstance(p, torch.nn.Conv3d) or isinstance(p, torch.nn.ConvTranspose3d):
+        for name, m in self.named_modules():
+            if 'eft' in name:
+                if isinstance(m, torch.nn.Conv1d) or isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.Conv3d) or isinstance(m, torch.nn.ConvTranspose3d):
                     if self.ef_lr5:
-                        ps = list(p.parameters())
+                        ps = list(m.parameters())
                         ef_weight.append(ps[0])
                         if len(ps)==2:
                             ef_bias.append(ps[1])
                     else:
-                        ps = list(p.parameters())
+                        ps = list(m.parameters())
                         normal_weight.append(ps[0])
                         if len(ps)==2:
                             normal_bias.append(ps[1])
-                elif isinstance(p, torch.nn.Linear):
+                elif isinstance(m, torch.nn.Linear):
                     if self.ef_lr5:
-                        ps = list(p.parameters())
-                        ef_weight.append(ps[0])
+                        ps = list(m.parameters())
+                        ef_lr_weight.append(ps[0])
                         if len(ps)==2:
-                            ef_bias.append(ps[1])
+                            ef_lr_bias.append(ps[1])
                     else:
-                        ps = list(p.parameters())
+                        ps = list(m.parameters())
                         normal_weight.append(ps[0])
                         if len(ps)==2:
                             normal_bias.append(ps[1])
-                elif isinstance(p, torch.nn.BatchNorm3d) or isinstance(p, torch.nn.BatchNorm2d) or isinstance(p, torch.nn.BatchNorm1d):
-                    bn.extend(list(p.parameters()))
-                elif len(p._modules) == 0:
-                    if len(list(p.parameters())) > 0:
+                elif isinstance(m, torch.nn.BatchNorm3d) or isinstance(m, torch.nn.BatchNorm2d) or isinstance(m, torch.nn.BatchNorm1d):
+                    if self.ef_lr5:
+                        ef_bn.extend(list(m.parameters()))
+                    else:
+                        bn.extend(list(m.parameters()))
+                elif len(m._modules) == 0:
+                    if len(list(m.parameters())) > 0:
                         raise ValueError("New atomic module type: {} in eft blocks. Need to give it a learning policy".format(type(m)))
-
             else:
-                if isinstance(p, torch.nn.Conv2d) or isinstance(p, torch.nn.Conv3d):
-                    ps = list(p.parameters())
+                if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.Conv3d):
+                    ps = list(m.parameters())
                     conv_cnt += 1
                     if conv_cnt == 1:
                         first_conv_weight.append(ps[0])
@@ -178,19 +184,8 @@ class VideoNet(nn.Module):
                         if len(ps) == 2:
                             normal_bias.append(ps[1])
 
-                elif isinstance(p, torch.nn.ConvTranspose3d):
-                    ps = list(p.parameters())
-                    if self.fc_lr5:
-                        lr5_weight.append(ps[0])
-                        if len(ps) == 2:
-                            lr5_weight.append(ps[1])
-                    else:
-                        normal_weight.append(ps[0])
-                        if len(ps) == 2:
-                            normal_weight.append(ps[1])
-
-                elif isinstance(p, torch.nn.Linear):
-                    ps = list(p.parameters())
+                elif isinstance(m, torch.nn.Linear):
+                    ps = list(m.parameters())
                     if self.fc_lr5:
                         lr5_weight.append(ps[0])
                     else:
@@ -200,13 +195,16 @@ class VideoNet(nn.Module):
                             lr10_bias.append(ps[1])
                         else:
                             normal_bias.append(ps[1])
-                elif isinstance(p, torch.nn.BatchNorm3d) or isinstance(p, torch.nn.BatchNorm2d):
+
+                elif isinstance(m, torch.nn.BatchNorm2d):
                     bn_cnt += 1
                     # later BN's are frozen
                     if not self._enable_pbn or bn_cnt == 1:
-                        bn.extend(list(p.parameters()))
-                elif len(p._modules) == 0:
-                    if len(list(p.parameters())) > 0:
+                        bn.extend(list(m.parameters()))
+                elif isinstance(m, torch.nn.BatchNorm3d) or isinstance(m, torch.nn.BatchNorm1d):
+                    bn.extend(list(m.parameters()))
+                elif len(m._modules) == 0:
+                    if len(list(m.parameters())) > 0:
                         raise ValueError("New atomic module type: {}. Need to give it a learning policy".format(type(m)))
 
         return [
@@ -223,14 +221,20 @@ class VideoNet(nn.Module):
             {'params': custom_ops, 'lr_mult': 1, 'decay_mult': 1,
              'name': "custom_ops"},
             # for ef
-            {'params': ef_weight, 'lr_mult': 2, 'decay_mult': 1,
+            {'params': ef_weight, 'lr_mult': 5, 'decay_mult': 1,
              'name': "ef_weight"},
-            {'params': ef_bias, 'lr_mult': 4, 'decay_mult': 0,
+            {'params': ef_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "ef_bias"},
+            {'params': ef_bn, 'lr_mult': 5, 'decay_mult': 0,
+             'name': "ef_bn"},
+            {'params': ef_lr_weight, 'lr_mult': 5, 'decay_mult': 1,
+             'name': "ef_lr_weight"},
+            {'params': ef_lr_bias, 'lr_mult': 5, 'decay_mult': 0,
+             'name': "ef_lr_bias"},
             # for fc
             {'params': lr5_weight, 'lr_mult': 5, 'decay_mult': 1,
              'name': "lr5_weight"},
-            {'params': lr10_bias, 'lr_mult': 10, 'decay_mult': 0,
+            {'params': lr10_bias, 'lr_mult': 5, 'decay_mult': 0,
              'name': "lr10_bias"},
         ]
 
