@@ -137,7 +137,7 @@ def main():
     val_sampler = torch.utils.data.distributed.DistributedSampler(val_dataset)
     val_loader = torch.utils.data.DataLoader(val_dataset,
         batch_size=args.batch_size, num_workers=args.workers, 
-        pin_memory=True, sampler=val_sampler, drop_last=True)
+        pin_memory=True, sampler=val_sampler)
 
     # define loss function (criterion) and optimizer
     if args.loss_type == 'nll':
