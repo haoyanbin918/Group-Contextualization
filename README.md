@@ -55,8 +55,8 @@ Here we provide some of the pretrained models.
 | ----------------- | ----------- | ---------- | ----------- | ---------------- |
 | GC-TSN ResNet50   | 8 * 1 * 10  | 75.2%      | 92.1%     | [link]() |
 | GC-TSM ResNet50   | 8 * 1 * 10  | 75.4%      | 91.9%     | [link]() |
-| GC-TSM ResNet50   | 16 * 1 * 10 | 76.7%      | 92.9%     | [link]() |
-| GC-TSM ResNet50   | 16 * 3 * 10 | 77.1%      | 92.9%     | [link]() |
+| GC-TSM ResNet50   | 16 * 1 * 10 | 76.7%      | 92.9%     | [link](https://drive.google.com/file/d/1Mr8o6Te_qx13aiGw2SDlf-05Xncc1Mxv/view?usp=share_link) |
+| GC-TSM ResNet50   | 16 * 3 * 10 | 77.1%      | 92.9%     | |
 | GC-TDN ResNet50   | 8 * 3 * 10  | 77.3%      | 93.2%     | [link](https://drive.google.com/file/d/1u-YzfLWexBtif5KsrIeK5VcUUxVQ2AZo/view?usp=sharing) |
 | GC-TDN ResNet50   | 16 * 3 * 10  | 78.8%      | 93.8%     | [link](https://drive.google.com/file/d/18MfpnuZppVq7j53seY48TtU9QwD1PgV9/view?usp=sharing) |
 | GC-TDN ResNet50   | (8+16) * 3 * 10  | 79.6%   | 94.1%     |  |
