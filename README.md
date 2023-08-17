@@ -109,7 +109,7 @@ use the 224×224 resolution for performance report.
 | GC-GST ResNet50   | 16 * 1 * 1  | 82.5%     | [link]() |
 | GC-TSN ResNet50   | 16 * 1 * 1  | 86.8%     | [link](https://drive.google.com/file/d/1R5jjvbXVZywxTO3NeoDKHiRU9o5NwFrl/view?usp=sharing) |
 | GC-TSM ResNet50   | 16 * 1 * 1  | 87.2%     | [link](https://drive.google.com/file/d/1R5jjvbXVZywxTO3NeoDKHiRU9o5NwFrl/view?usp=sharing) |
-| GC-TDN ResNet50   | 16 * 1 * 1  | 87.6%     | [link]() |
+| GC-TDN ResNet50   | 16 * 1 * 1  | 87.6%     | [link](https://drive.google.com/file/d/1sPLV9-XdYMMxHMLd8PGP5anpYtkWq4ar/view?usp=sharing) |
 
 
 ### EGTEA Gaze
