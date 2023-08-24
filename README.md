@@ -125,8 +125,9 @@ For different backbones, please use their corresponding training code, like 'tra
 
 ## Test 
 
-We provided several examples to train TSM with this repo:
+For TSN/TSM/GST backbones, please use the test py "test_models_tsntsmgst_gc.py", run 'sh bash_test_tsntsmgst_gc.sh'. Please change the "from ops_tsntsmgst.models_tsn import VideoNet" (line-19 in test_models_tsntsmgst_gc.py) with the corresponding model name.
 
+For TDN backbone, please use its official test file, see https://github.com/MCG-NJU/TDN.
 ```
 ```
 
